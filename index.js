@@ -1,13 +1,3 @@
-var wordtoguessEl = document.getElementById('word-to-guess')
-var previouswordEl = document.getElementById('previous-word')
-var incorrectlettersEl = document.getElementById('incorrect-letters')
-var remainingguessesEl = document.getElementById('remaining-guesses')
-var winsEl = document.getElementById('wins')
-var lossesEl = document.getElementById('losses')
-
-var correct = 0
-var incorrect = 0
-
 var words = [
   'bananas',
   'grapes',
@@ -20,30 +10,71 @@ var words = [
   'meatloaf',
   'ukulele',
   'mango'
-];
+]
+//get variables with IDs in HTML//
+var wordToGuess = document.getElementById("word-to-guess")
+var remainingGuesses = document.getElementById("remaining-guesses")
+var incorrectLettersShown = document.getElementById("incorrect-letters")
+var previousWord = document.getElementById("previous-word")
+var winsShown = document.getElementById("wins")
+var lossesShown = document.getElementById("losses")
+var visibleWord = []
+var correctLetters = []
+var incorrectLetters = []
+var letterGuessed = []
+var wins = 0
+var losses = 0 
+var guessesRemaining = 10
 
-var correctword = [];
-
-var game = {
-  pickWord() {
-    var randomWord = words[Math.floor(Math.random() * words.length)];
-    correctword.length = randomWord.length;
-    correctword.fill('_');
-    wordtoguessEl.innerHTML = correctword.join(' ');
-    this.chosenWord = randomWord;
-  },
-
-  validateEntry(key) {
-    if (
-    this.chosenWord.indexOf(key) > -1 || 
-    this.chosenWord.indexOf(key.toLowerCase()) > -1
-    );
+//keyboard access//
+body=document.querySelector('body')
+body.onkeyup = function(e) {
+  var key = e.key.toLowerCase()
+  if(!/^[a-z]{1}$/g.test(key)) return
+  if (randomSelect.includes(key) && correctLetters.indexOf(key) === -1) { 
+    correctLetters.push(key)
+  } else if (!randomSelect.includes(key) && incorrectLetters.indexOf(key) === -1) {
+    incorrectLetters.push(key)
+    guessesRemaining--
   }
-}
+ 
+  guesses()
+  if (visibleWord === randomSelect) {
+    wins++
+    winsShown.textContent = wins
+    previousWord.textContent = randomSelect
 
-game.pickWord();
+    runGame()
+  }
+  if (guessesRemaining === 0) { 
+    losses++
+    lossesShown.textContent = losses
+    previousWord.textContent = randomSelect
+   
+    runGame()
+    }}
+  function guesses() {
+      visibleWord = ''
+      for (let i = 0; i < randomSelect.length; i++) {
+        if (correctLetters.indexOf(randomSelect[i]) > -1) {
+          visibleWord += randomSelect[i]
+        } else {
+          visibleWord += '_'
+        }
+      }
+      remainingGuesses.textContent = guessesRemaining
+      incorrectLettersShown.textContent = incorrectLetters
+      wordToGuess.textContent = visibleWord
+      }   
+   //Need function to run game   
+  function runGame () {
+        randomSelect = words[Math.floor(Math.random()*words.length)]
+        correctLetters = []//randomSelect.split()//
+        incorrectLetters = []
+        guessesRemaining = 10
+        
+        guesses()
+      }
 
-document.onkeyup = function(e){
-  console.log(e.key) 
-}
-
+ 
+    runGame()
